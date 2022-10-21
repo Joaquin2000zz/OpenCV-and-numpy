@@ -1,8 +1,11 @@
 """
 module which contains QR's class
 """
+import base64
 import cv2
+import io
 import numpy as np
+from PIL import Image
 from pyzbar.pyzbar import decode
 import qrcode
 
@@ -16,7 +19,6 @@ class QR:
                version=1, box_size=10, border=5):
         """
         create and saves qr's codes in a given path
-
         data: QR's content
         path: QR's path in which gonna be saved
         fill_color: QR's color
@@ -72,23 +74,24 @@ class QR:
         for barcode in decoded:
             retList.append({
                 'content': barcode.data.decode('utf-8'),
-                'bounding_box': np.array([barcode.polygon],
+                'polygon_box': np.array([barcode.polygon],
                                          np.int32).reshape((-1, 1, 2)),
-                'text_position': barcode.rect
+                'bounding_box': barcode.rect
             })
 
         # if decodes an barcode, we gonna return both, their content and position
         return retList
 
-    def start(self):
+    def start(self, vwidth=640, vheight=480):
         """
         open the camera and starts to capture video
+        vwidth and vheight are the shape of video's window
         """
 
         video = cv2.VideoCapture(0)
 
-        video.set(3, 640)
-        video.set(4, 480)
+        video.set(3, vwidth)
+        video.set(4, vheight)
 
         while True:
             flag, frame = video.read()
@@ -99,16 +102,17 @@ class QR:
                 if decoded:
                     for content in decoded:
                         cv2.polylines(img=frame, isClosed=True,
-                                      pts=[content['bounding_box']],
+                                      pts=[content['polygon_box']],
                                       color=(0, 0, 255),
                                       thickness=2)
-                        l, t, w, h = content['text_position']
-                        print(content['text_position'])
+                        l, t, w, h = content['bounding_box']
+                        print(content['bounding_box'])
 
                         # Finds space required by the text so that
                         # we can put a background with that amount of width.
                         (w, h), _ = cv2.getTextSize(content['content'],
-                                                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, 1)
+                                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                                    0.9, 1)
                         cv2.rectangle(frame, (l, t - 40),
                                       (l + w, t), (0, 0, 255), -1)
                         cv2.putText(img=frame, text=content['content'],
@@ -122,6 +126,20 @@ class QR:
             if cv2.waitKey(1) == ord('q'):
                 break
 
+    def read_bytes_array(self, bytes):
+        """
+        read bytes array and decode their content
+        if it contains a qr. Otherwise, returns False  
+        """
+        try:
+            imgdata = base64.b64decode(bytes.split(',')[1])
+            img = Image.open(io.BytesIO(imgdata))
+            opencv_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
 
-qr = QR()
-qr.start()
+            return self.decode(img=opencv_img)
+        except:
+            return False
+
+if __name__ == '__main__':
+    qr = QR()
+    qr.start()

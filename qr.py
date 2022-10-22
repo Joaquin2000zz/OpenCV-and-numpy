@@ -15,21 +15,29 @@ class QR:
     class that creates and decodes qr's codes
     """
 
-    def create(self, data=None, path=None, fill_color='black', back_color='white',
+    def create(self, data=None, path=None, PIL=False, for_pdf=False,
+               fill_color='black', back_color='white',
                version=1, box_size=10, border=5):
         """
-        create and saves qr's codes in a given path
+        create and saves qr's codes in a given path or makes a PIL object
         data: QR's content
         path: QR's path in which gonna be saved
+        PIL: flag which determines whether it's gonna
+             return an PIL object or not
+        for_pdf: flag which determines wheter it's gonna return
+                an PIL image streamed in Bytes for be ready to
+                use in reportlab instance (to insert the qr in a pdf)
         fill_color: QR's color
         back_color: QR's background color
         version: QR's version
         box_size: QR's size
         border: QR's border size
-        Return: True in success and False if it fails
+        Return: - if a path is given, returns True in success
+                - if PIL is True, returns a PIL object with the image
+                - otherwise, if it fails, returns False
         """
 
-        if not data or not path:
+        if not data or (not path and not PIL and not for_pdf):
             return False
 
         # Creating an instance of QRCode class
@@ -44,6 +52,17 @@ class QR:
 
         img = qr.make_image(fill_color=fill_color,
                             back_color=back_color)
+
+        if for_pdf:
+            # just use reportlab.lib.utils.ImageReader() before
+            # passing to the reportlab.pdfgen.canvas.Canvas().drawImage()
+            # instance method << Canvas() instance >> and wuoalah :)
+            stream = io.BytesIO()
+            img.save(stream=stream, format='png')
+            return stream
+
+        if PIL:
+            return img
 
         if path[-4:] != '.png':
             path += '.png'
@@ -82,16 +101,15 @@ class QR:
         # if decodes an barcode, we gonna return both, their content and position
         return retList
 
-    def start(self, vwidth=640, vheight=480):
+    def start(self):
         """
         open the camera and starts to capture video
-        vwidth and vheight are the shape of video's window
         """
 
         video = cv2.VideoCapture(0)
 
-        video.set(3, vwidth)
-        video.set(4, vheight)
+        video.set(3, 640)
+        video.set(4, 480)
 
         while True:
             flag, frame = video.read()

@@ -2,8 +2,9 @@
 module which contains QR's class
 """
 import base64
-import cv2
+from os.path import join
 import io
+import cv2
 import numpy as np
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -15,13 +16,15 @@ class QR:
     class that creates and decodes qr's codes
     """
 
-    def create(self, data=None, path=None, PIL=False, for_pdf=False,
+    def create(self, data=None, path=None, name=None,  PIL=False, for_pdf=False,
                fill_color='black', back_color='white',
                version=1, box_size=10, border=5):
         """
         create and saves qr's codes in a given path or makes a PIL object
         data: QR's content
         path: QR's path in which gonna be saved
+              (is recommended to pass an os.path.abspath() string)
+        name: name of the new file
         PIL: flag which determines whether it's gonna
              return an PIL object or not
         for_pdf: flag which determines wheter it's gonna return
@@ -38,6 +41,7 @@ class QR:
         """
 
         if not data or (not path and not PIL and not for_pdf):
+            print('entre al if 1', data, path, PIL, for_pdf, (not path and not PIL and not for_pdf))
             return False
 
         # Creating an instance of QRCode class
@@ -64,9 +68,9 @@ class QR:
         if PIL:
             return img
 
-        if path[-4:] != '.png':
-            path += '.png'
-        img.save(path)
+        if name[-4:] != '.png':
+            name += '.png'
+        img.save(name if not path else join(path, name))
 
         return True
 

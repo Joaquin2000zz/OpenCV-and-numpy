@@ -41,7 +41,6 @@ class QR:
         """
 
         if not data or (not path and not PIL and not for_pdf):
-            print('entre al if 1', data, path, PIL, for_pdf, (not path and not PIL and not for_pdf))
             return False
 
         # Creating an instance of QRCode class

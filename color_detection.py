@@ -46,32 +46,34 @@ def apply_mask(hsv_frame, frame, L_limit: np.ndarray, U_limit: np.ndarray,
                         1.0, col_dict[color])
     return frame
 
-cap = cv2.VideoCapture(0)
+if __name__ == '__main__':
 
-while True:
-    # ret will return a true value if the frame exists otherwise False
-    ret, frame = cap.read()
+    cap = cv2.VideoCapture(0)
 
-    # changing the color format from BGR to HSV
-    # This will be used to create the masks
-    into_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    while True:
+        # ret will return a true value if the frame exists otherwise False
+        ret, frame = cap.read()
 
-    RL_limit = np.array([136, 87, 111]) # setting red lower limit
-    RU_limit = np.array([180, 255, 255]) # setting red upper limit
-    GL_limit = np.array([25, 52, 72]) # setting green lower limit
-    GU_limit = np.array([102, 255, 255]) # setting green upper limit
-    BL_limit = np.array([98, 80, 2]) # setting the blue lower limit
-    BU_limit = np.array([120, 255, 255]) # setting the blue upper limit
+        # changing the color format from BGR to HSV
+        # This will be used to create the masks
+        into_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    frame = apply_mask(into_hsv, frame, RL_limit, RU_limit, 'red')
-    frame = apply_mask(into_hsv, frame, GL_limit, GU_limit, 'green')
-    frame = apply_mask(into_hsv, frame, BL_limit, BU_limit, 'blue')
-    #this shows the frames
-    cv2.imshow("Multiple Color Detection in Real-Time", frame)
-    # this function will be triggered when the ESC key is pressed
-    # and the while loop will terminate and so will the program
-    if cv2.waitKey(1) == 27:
-        break
+        RL_limit = np.array([136, 87, 111]) # setting red lower limit
+        RU_limit = np.array([180, 255, 255]) # setting red upper limit
+        GL_limit = np.array([25, 52, 72]) # setting green lower limit
+        GU_limit = np.array([102, 255, 255]) # setting green upper limit
+        BL_limit = np.array([98, 80, 2]) # setting the blue lower limit
+        BU_limit = np.array([120, 255, 255]) # setting the blue upper limit
 
-cap.release() 
-cv2.destroyAllWindows()
+        frame = apply_mask(into_hsv, frame, RL_limit, RU_limit, 'red')
+        frame = apply_mask(into_hsv, frame, GL_limit, GU_limit, 'green')
+        frame = apply_mask(into_hsv, frame, BL_limit, BU_limit, 'blue')
+        #this shows the frames
+        cv2.imshow("Multiple Color Detection in Real-Time", frame)
+        # this function will be triggered when the ESC key is pressed
+        # and the while loop will terminate and so will the program
+        if cv2.waitKey(1) == 27:
+            break
+
+    cap.release() 
+    cv2.destroyAllWindows()

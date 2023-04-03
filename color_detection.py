@@ -10,6 +10,7 @@ def apply_mask(hsv_frame, frame, L_limit: np.ndarray, U_limit: np.ndarray,
     @L_limit: lower limit
     @U_limit: upper limit
     @color: color name
+    Returns: the modifyed frame
     """
     col_dict = {
         'red': (0, 0, 255),

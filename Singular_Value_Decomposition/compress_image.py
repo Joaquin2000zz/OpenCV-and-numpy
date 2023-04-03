@@ -43,7 +43,6 @@ def compress_image(A, r, plot=False, gray_scale=False):
             plt.plot(np.cumsum(S / np.sum(S)))
             plt.title(f'Singular Values: Cumulative Sum channel {i + 1}:')
             plt.show()
-        print(U.shape, S.shape, VT.shape)
         X_approx.append(U[:, :r] @ S[:r, :r] @ VT[:r, :])
     return np.around(np.stack(X_approx, axis=-1)).astype(int)
 
@@ -63,7 +62,6 @@ if __name__ == '__main__':
             aproxA = compress_image(A, int(r), plot=True)
         else:
             aproxA = compress_image(A, int(r))
-        print(aproxA.shape)
         plt.imshow(aproxA)
         plt.title(f'r: {r}')
     plt.axis('off')

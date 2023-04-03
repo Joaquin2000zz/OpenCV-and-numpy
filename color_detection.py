@@ -28,7 +28,7 @@ def apply_mask(hsv_frame, frame, L_limit: np.ndarray, U_limit: np.ndarray,
                       kernel) # Morphological Transform, Dilation for each color
     # bitwise and operator between image frame and mask
     # determine to detect only that particular color
-    bitwise = cv2.bitwise_and(frame, frame,
+    cv2.bitwise_and(frame, frame,
                            mask=mask)
     # this track the red colour inside the color rectangle
     contours, hierarchy = cv2.findContours(mask,

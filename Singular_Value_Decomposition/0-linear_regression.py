@@ -16,7 +16,7 @@ import numpy as np
 # before use a model, a common practice is to test it in some task
 # that we know the answer in order to se how good the model is
 x = 3 # True slope
-a = np.arange(-2, 2, .25).reshape(-1, 1)
+a = np.arange(-2, 2, .50).reshape(-1, 1)
 b = a * x + np.random.randn(*a.shape) # adding noise to simulate normal data variance
 
 plt.plot(a, a * x, color='k', linewidth=2, label='True Line')

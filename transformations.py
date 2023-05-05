@@ -18,7 +18,7 @@ def transformations(*f, **coordinates):
 
 if __name__ == '__main__':
     functions = [lambda x : 1 / (1 + np.exp(-x)) if x else 0,
-                 lambda x: 1 / x]
+                 lambda x: 1 / x if x else x]
     
     coordinates = {'sigmoid': (np.arange(-6, 6, .1), np.arange(-6, 6, .1).tolist()),
                    'hyperbola': (np.arange(-100, 100), np.arange(-100, 100).tolist())}
